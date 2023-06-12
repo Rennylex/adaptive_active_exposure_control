@@ -399,7 +399,13 @@ void update_exposure(double deltaT){
   //
     count_skip++; // TODO remove this?
 
-    if(active_exposure_control && count_skip > 10){
+
+    if(!active_exposure_control && !grad_exposure_control){
+        set_exposure_param(0);
+        ROS_INFO("Current exposure time: [%f]", exposure_time_);
+
+    }
+    else if(active_exposure_control && count_skip > 10){
     // TODO guaranteed update min and max according to current image
     // min_x = 0;
     // min_y = 0;
