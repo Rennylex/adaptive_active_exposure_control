@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<launch>
+
+
+    <node pkg="rosbag" type="record" name="rosbag_cam_record"
+          args="record -o /tmp/cameras /camera_array/cam0/image_raw/compressed /bluerov_controller/ar_tag_detector_2
+
+"/> 
+
+
+
+    <!--<include file="$(find droplet_underwater_assembly)/description.launch" /> -->
+    <include file="$(find storage_0)/description.launch" />
+    <!--<node pkg="nodelet" type="nodelet" name="bluerov_nodelet_manager" args="manager" output="screen" respawn="true"> -->
+    <node pkg="nodelet" type="nodelet" name="bluerov_nodelet_manager" args="manager" output="screen" respawn="true">
+      <param name="num_worker_threads" value="1" />
+    </node>
+
+    <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition_node.launch">
+      <!--<arg name="nodelet_manager_name" value="bluerov_nodelet_manager"/> -->
+      <!--<arg name="config_file" value="$(find downward_camera_localizer)/param/flir_senko_land_calibration.yaml"/> -->
+      <arg name="config_file" value="$(find storage_0)/param/flir_senko_land_calibration.yaml"/>
+      <!--<arg name="start_nodelet_manager" value="true"/>-->
+      <arg name="color" value="false"/>
+      <arg name="exposure_time" value="7000"/>
+      <arg name="target_grey_value" value="0"/>
+    </include>
+
+   <include file="$(find exposure_control)/launch/changeParam.launch">
+    </include>
+
+    <node pkg="nodelet" type="nodelet" name="stag_ros" output="screen" args="load stag_ros/StagNodelet bluerov_nodelet_manager" respawn="false" required="false">
+      <param name="camera_image_topic" type="string" value="/camera_array/cam0/image_raw" />
+      <param name="camera_info_topic" type="string" value="/camera_array/cam0/camera_info" />
+      <param name="tag_id_type" type="int" value="21" />
+      <param name="marker_frame_prefix" type="string" value="/ar_marker_" />
+      <param name="default_marker_size" type="double" value="0.100" />
+      <param name="output_frame_id"     type="string" value="/base_link" />
+      <param name="image_frame_id"      type="string" value="/cam_0_optical_frame" />
+      <param name="marker_message_topic" type="string" value="/bluerov_controller/ar_tag_detector_2" />
+      <param name="process_images_in_parallel" type="bool" value="false" />
+      <param name="use_marker_bundles" type="bool" value="false" />
+      <param name="publish_debug_images" type="bool" value="true" />
+      <!--<rosparam command="load" file="$(find droplet_underwater_assembly)/param/bundle-four-stags-aluminum.json" /> -->
+      <!--<rosparam command="load" param="marker_sizes_by_id" file="$(find droplet_underwater_assembly)/param/marker_sizes_by_id.yaml" /> -->
+      <rosparam command="load" file="$(find storage_0)/param/bundle-four-stags-aluminum-and-large-six-tags.json" />
+      <rosparam command="load" param="marker_sizes_by_id" file="$(find storage_0)/param/marker_sizes_by_id.yaml" />
+
+      <param name="marker_track_height_offset" type="int" value="50" />
+      <param name="marker_track_width_offset" type="int" value="50" />
+      <param name="track_markers" type="bool" value="false" />
+
+      <param name="is_fisheye" type="bool" value="true" />
+      <param name="undistort_rectify_alpha" type="double" value="0.030" />
+    </node>
+
+        <!--<node pkg="downward_camera_localizer" name="keyboard_node" respawn="false" required="true" type="keypress_forwarder.py" output="screen"/>-->
+</launch>

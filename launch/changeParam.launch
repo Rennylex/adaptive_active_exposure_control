@@ -1,0 +1,16 @@
+<launch>
+  <!-- load the acquisition node -->
+  <node pkg="exposure_control" type="changeParam" name="changeParam" args="" output="screen" respawn="false" >
+  </node>    
+ <!-- <param name="deltaT" type="double" value="7000" /> -->
+ <param name="step_length_aec_" type="double" value="0.000000001" />
+
+ <param name="active_aec_" type="bool" value="false" />
+
+ <param name="active_gec_" type="bool" value="true" />
+
+ <param name="upper_bound_" type="double" value="50000" />
+
+
+ 
+</launch>
