@@ -4,14 +4,14 @@
 
 
     <node pkg="rosbag" type="record" name="rosbag_cam_record"
-          args="record -o /tmp/cameras /camera_array/cam0/image_raw/compressed /bluerov_controller/ar_tag_detector_2
+	    args="record -o /home/bluerov/lex_experiments /camera_array/cam0/image_raw/compressed /bluerov_controller/ar_tag_detector_2 /rosout
 
 "/> 
 
 
 
     <!--<include file="$(find droplet_underwater_assembly)/description.launch" /> -->
-    <include file="$(find storage_0)/description.launch" />
+    <include file="$(find exposure_control)/description.launch" />
     <!--<node pkg="nodelet" type="nodelet" name="bluerov_nodelet_manager" args="manager" output="screen" respawn="true"> -->
     <node pkg="nodelet" type="nodelet" name="bluerov_nodelet_manager" args="manager" output="screen" respawn="true">
       <param name="num_worker_threads" value="1" />
@@ -20,14 +20,14 @@
     <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition_node.launch">
       <!--<arg name="nodelet_manager_name" value="bluerov_nodelet_manager"/> -->
       <!--<arg name="config_file" value="$(find downward_camera_localizer)/param/flir_senko_land_calibration.yaml"/> -->
-      <arg name="config_file" value="$(find storage_0)/param/flir_senko_land_calibration.yaml"/>
+      <arg name="config_file" value="$(find exposure_control)/flir_standard_lens.yaml"/>
       <!--<arg name="start_nodelet_manager" value="true"/>-->
       <arg name="color" value="false"/>
       <arg name="exposure_time" value="7000"/>
       <arg name="target_grey_value" value="0"/>
     </include>
 
-   <include file="$(find exposure_control)/launch/changeParam.launch">
+   <include file="$(find exposure_control)/changeParam.launch">
     </include>
 
     <node pkg="nodelet" type="nodelet" name="stag_ros" output="screen" args="load stag_ros/StagNodelet bluerov_nodelet_manager" respawn="false" required="false">
@@ -44,14 +44,14 @@
       <param name="publish_debug_images" type="bool" value="true" />
       <!--<rosparam command="load" file="$(find droplet_underwater_assembly)/param/bundle-four-stags-aluminum.json" /> -->
       <!--<rosparam command="load" param="marker_sizes_by_id" file="$(find droplet_underwater_assembly)/param/marker_sizes_by_id.yaml" /> -->
-      <rosparam command="load" file="$(find storage_0)/param/bundle-four-stags-aluminum-and-large-six-tags.json" />
-      <rosparam command="load" param="marker_sizes_by_id" file="$(find storage_0)/param/marker_sizes_by_id.yaml" />
+      <rosparam command="load" file="$(find exposure_control)/bundle-four-stags-aluminum-and-large-six-tags.json" />
+      <rosparam command="load" param="marker_sizes_by_id" file="$(find exposure_control)/marker_sizes_by_id.yaml" />
 
       <param name="marker_track_height_offset" type="int" value="50" />
       <param name="marker_track_width_offset" type="int" value="50" />
       <param name="track_markers" type="bool" value="false" />
 
-      <param name="is_fisheye" type="bool" value="true" />
+      <param name="is_fisheye" type="bool" value="false" />
       <param name="undistort_rectify_alpha" type="double" value="0.030" />
     </node>
 
