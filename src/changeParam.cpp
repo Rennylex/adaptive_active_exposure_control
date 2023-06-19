@@ -236,6 +236,8 @@ double get_gamma(Mat img){
     //normalize(grad1, grad1, 0, 1, NORM_MINMAX);
     //double max_score=grad_score2(grad1);
     double max_score=grad_score(grad1);
+    double second_max_score=0;
+
 
     for(int i=0;i<11;i++){
         cv::Mat img_powed;
@@ -251,11 +253,14 @@ double get_gamma(Mat img){
         double score=grad_score(grad);
         //ROS_INFO("score: %f, %d",score,i);
         if(score>max_score){
+            second_max_score=max_score;
             max_score=score;
             //ROS_INFO("max_score: %f",max_score);
             gamma=gamma_anchor[i];
         }
     }
+    ROS_INFO("max_score: %f",max_score);
+    ROS_INFO("second_max_score: %f",second_max_score);
     return gamma;
 }
 
@@ -334,19 +339,30 @@ void tag_callback(const stag_ros::StagMarkers::ConstPtr& msg)
 
             //find the min and max of the x and y
             //make sure it's int
-            int padding_x=std::abs((upperleft_x-lowerleft_x));
-            int padding_y=std::abs((upperleft_y-upperright_y));
-            min_x = (int)std::min(std::min(upperleft_x,lowerleft_x),std::min(upperright_x,lowerright_x))-150;//-padding_x/8;//10;//25;
-            min_y = (int)std::min(std::min(upperleft_y,upperright_y),std::min(lowerleft_y,lowerright_y))-150;//-padding_y/8;//10;//25;
-            max_x = (int)std::max(std::max(upperright_x,lowerright_x),std::max(lowerleft_x,upperleft_x))+150;//+padding_x/8;//10;//25;
-            max_y = (int)std::max(std::max(upperright_y,lowerright_y),std::max(lowerleft_y,upperleft_y))+150;//+padding_y/8;//10;//25;
+            min_x = (int)std::min(std::min(upperleft_x,lowerleft_x),std::min(upperright_x,lowerright_x));//-200;//-padding_x/8;//10;//25;
+            min_y = (int)std::min(std::min(upperleft_y,upperright_y),std::min(lowerleft_y,lowerright_y));//-200;//-padding_y/8;//10;//25;
+            max_x = (int)std::max(std::max(upperright_x,lowerright_x),std::max(lowerleft_x,upperleft_x));//+200;//+padding_x/8;//10;//25;
+            max_y = (int)std::max(std::max(upperright_y,lowerright_y),std::max(lowerleft_y,upperleft_y));//+200;//+padding_y/8;//10;//25;
+
+
+            ROS_INFO("MAX_X: [%d]", max_x);
+            ROS_INFO("MIN_X: [%d]", min_x);
+
+
+            //padding
+            float padding_x=(max_x-min_x)*0.1;
+            float padding_y=(max_y-min_y)*0.1;
+
+            min_x=min_x-padding_x;
+            min_y=min_y-padding_y;
+            max_x=max_x+padding_x;
+            max_y=max_y+padding_y;
 
             min_x=std::max(0,min_x);
             min_y=std::max(0,min_y);
 
             max_x=std::min(height,max_x);
             max_y=std::min(width,max_y);
-
 
 
         }   
@@ -691,7 +707,7 @@ void update_exposure(double deltaT){
 //     //deltaT = deltaT - alpha*pMpdT
     double alpha =step_len_aec;//0.000000001;//0.000001;//0.0000001; //0.00000000005;//0.0000000001;//0.000000005;//0.00000005
     double nextdeltaT = deltaT;
-    if(abs(pMpdT)>200)
+    if(abs(pMpdT)>15000)
         nextdeltaT = deltaT + alpha * pMpdT;
             ROS_INFO_STREAM("Attempted Exposure time: " << nextdeltaT*1000000);
             exposure_time_=nextdeltaT*1000000;
@@ -717,6 +733,11 @@ void update_exposure(double deltaT){
         // min_y=min_y-50;
         // max_x+=50;
         // max_y+=50;
+
+        min_x=max(0,min_x);
+        min_y=max(0,min_y);
+        max_x=min(max_x,image.cols);
+        max_y=min(max_y,image.rows);
         image = image(Rect(min_x,min_y,max_x-min_x,max_y-min_y));
         // //compress the image in half
         //resize(image, image, Size(), 1, 1, INTER_LINEAR);
