@@ -7,7 +7,7 @@
 <!-- 0.000000000001for bright marker,0.000000001for dark -->
     
 
- <param name="step_length_gec_" type="double" value="0.1" />
+ <param name="step_length_gec_" type="double" value="0.00000001" />
 <!-- 0.00000001for bright marker,0.000000001for dark,"0.000000001fordmbbg" -->
     
  <param name="active_aec_" type="bool" value="true" />
