@@ -134,9 +134,6 @@ ${LibUnwind_INCLUDE_DIRS}
 )
 
 set (LIBS ${LibUnwind_LIBRARIES} Spinnaker ${OpenCV_LIBS} ${Boost_GENERAL})
-
-add_executable(changeParam src/changeParam.cpp)
-target_link_libraries(changeParam ${catkin_LIBRARIES})
     
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -185,9 +182,9 @@ target_link_libraries(changeParam ${catkin_LIBRARIES})
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-install(TARGETS changeParam
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+# install(TARGETS ${PROJECT_NAME}_node
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
@@ -203,9 +200,6 @@ install(TARGETS changeParam
 #   FILES_MATCHING PATTERN "*.h"
 #   PATTERN ".svn" EXCLUDE
 # )
-install(DIRECTORY param/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-install(DIRECTORY launch/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-install(DIRECTORY robots/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/robots)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -226,3 +220,7 @@ install(DIRECTORY robots/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/robots
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+add_executable(changeParam src/changeParam.cpp)
+target_link_libraries(changeParam ${catkin_LIBRARIES})
