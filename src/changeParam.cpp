@@ -64,7 +64,6 @@ void set_exposure_param(double new_deltaT){
     conf.ints.push_back(double_param);
 
     srv_req.config = conf;
-
     ros::service::call("/acquisition_node/set_parameters", srv_req, srv_resp);
 }
 
@@ -300,7 +299,9 @@ double update_exposure_nonlinear(double step_length, double exposure_time, doubl
     
 
     double new_exposure_time = exposure_time *(1+alpha*step_length*(R-1));
-    ROS_INFO("New exposure time: %f",new_exposure_time*1000000);
+    if (info_mode) {
+        ROS_INFO("New exposure time: %f",new_exposure_time*1000000);
+    }
     return new_exposure_time;
 }
 
@@ -425,7 +426,6 @@ void update_exposure(double deltaT){
 
   //
     count_skip++; // TODO remove this?
-
 
     if(!active_exposure_control && !grad_exposure_control && !active_aec_ori){
         set_exposure_param(0);
@@ -1029,10 +1029,8 @@ int main(int argc, char** argv) {
     // n.getParam("/changeParam/active_gec_", active_gec);
     // n.getParam("/changeParam/upper_bound_", max_bound);
 
-    n.getParam("step_length_aec_", step_len_aec);
-
-    n.getParam("step_length_gec_", step_len_gec);
-
+    n.getParam("step_length_aec", step_len_aec);
+    n.getParam("step_length_gec", step_len_gec);
     n.getParam("active_aec", active_aec);
     n.getParam("active_aec_ori", active_aec_ori);
     n.getParam("active_gec", active_gec);
