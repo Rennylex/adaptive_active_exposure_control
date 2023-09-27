@@ -1055,9 +1055,9 @@ int main(int argc, char** argv) {
     pub_image = it.advertise("/image_with_box", 1);
  
 
-
+// "/camera_array/"+camera_name+"/image_raw"
     //subscribe to /camera_array/cam0/image_raw
-    ros::Subscriber sub_image = n.subscribe("/camera_array/"+camera_name+"/image_raw", 1, img_callback);
+    ros::Subscriber sub_image = n.subscribe(camera_name, 1, img_callback);
 
 
 

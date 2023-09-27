@@ -23,7 +23,7 @@
  <param name="target_id" type="int" value="8" />
 
 
- <param name="cam_name" type="string" value="cam0" />
+ <param name="cam_name" type="string" value="/camera_array/cam0/image_raw" />
 
  <param name="info_mode" type="bool" value="true" />
 
