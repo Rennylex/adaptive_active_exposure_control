@@ -224,12 +224,3 @@ set (LIBS ${LibUnwind_LIBRARIES} Spinnaker ${OpenCV_LIBS} ${Boost_GENERAL})
 
 add_executable(changeParam src/changeParam.cpp)
 target_link_libraries(changeParam ${catkin_LIBRARIES})
-
-install(TARGETS changeParam
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-install(DIRECTORY param/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-install(DIRECTORY launch/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-install(DIRECTORY robots/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/robots)
-

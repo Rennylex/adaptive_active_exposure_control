@@ -10,7 +10,11 @@
  <param name="step_length_gec_" type="double" value="0.00000001" />
 <!-- 0.00000001for bright marker,0.000000001for dark,"0.000000001fordmbbg" -->
     
- <param name="active_aec_" type="bool" value="true" />
+ <param name="active_aec_" type="bool" value="false" />
+
+
+ <param name="active_aec_ori" type="bool" value="true" />
+
 
  <param name="active_gec_" type="bool" value="false" />
 
@@ -18,9 +22,12 @@
 
  <param name="target_id" type="int" value="8" />
 
- <param name="camera_name" type="string" value="cam_0" />
 
-  
+ <param name="cam_name" type="string" value="cam0" />
+
+ <param name="info_mode" type="bool" value="true" />
+
+
 
  
 </launch>
