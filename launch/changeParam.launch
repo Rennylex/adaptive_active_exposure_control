@@ -9,5 +9,5 @@
  <param name="upper_bound_" type="double" value="50000" />
  <param name="target_id" type="int" value="8" />
  <param name="cam_name" type="string" value="/camera_array/cam1/image_raw" />
- <param name="info_mode" type="bool" value="true" />
+ <param name="info_mode" type="bool" value="false" />
 </launch>
