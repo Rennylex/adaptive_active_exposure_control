@@ -356,8 +356,8 @@ void tag_callback(const stag_ros::StagMarkers::ConstPtr& msg)
 
 
 
-            ROS_INFO("MAX_X: [%d]", max_x);
-            ROS_INFO("MIN_X: [%d]", min_x);
+            //ROS_INFO("MAX_X: [%d]", max_x);
+            //ROS_INFO("MIN_X: [%d]", min_x);
 
 
 
@@ -376,10 +376,10 @@ void tag_callback(const stag_ros::StagMarkers::ConstPtr& msg)
             max_x=std::min(height,max_x);
             max_y=std::min(width,max_y);
 
-            ROS_INFO("MAX_X: [%d]", max_x);
-            ROS_INFO("MIN_X: [%d]", min_x);
-            ROS_INFO("MAX_Y: [%d]", max_y);
-            ROS_INFO("MIN_Y: [%d]", min_y);
+            //ROS_INFO("MAX_X: [%d]", max_x);
+            //ROS_INFO("MIN_X: [%d]", min_x);
+            //ROS_INFO("MAX_Y: [%d]", max_y);
+            //ROS_INFO("MIN_Y: [%d]", min_y);
 
 
         }   
@@ -446,6 +446,10 @@ void update_exposure(double deltaT){
     if(!active_exposure_control && !grad_exposure_control){
         set_exposure_param(0);
         ROS_INFO("Current exposure time: [%f]", exposure_time_);
+    }
+    else if(count_skip%100==0 && !id_detected)
+    {
+       ROS_INFO("NO MARKER DETECTED);
     }
     else if(active_exposure_control && count_skip > 10 && id_detected){
     // TODO guaranteed update min and max according to current image
@@ -608,7 +612,7 @@ void update_exposure(double deltaT){
     int k = 5;
     int len = gradient_result.rows*gradient_result.cols;
     int scale_down = len * p;
-    ROS_INFO("len is %d", len);
+    //ROS_INFO("len is %d", len);
     double wsum = 0;
     //N=log(lambda(1-sigma)+1) is a normalization factor
     double lambda = 10;
@@ -628,7 +632,7 @@ void update_exposure(double deltaT){
         }
         //ROS_INFO("SUM is %f", wsum);
     }
-    ROS_INFO("Weighting DONE");
+    //ROS_INFO("Weighting DONE");
     // for(int i=0;i<gradient_1d_with_location.size();i++)
     // {
     //     W.push_back(2/(1+exp(-2*(i-scale_down))));    
@@ -649,7 +653,7 @@ void update_exposure(double deltaT){
         //      ROS_INFO("gr is %f", gradient_1d[i]);
         M_softperc += (W[i] * (gradient_1d[i]));
     }
-    ROS_INFO("M_softperc is %f", M_softperc);
+    //ROS_INFO("M_softperc is %f", M_softperc);
 // //step 4: calculate partial_M_softperc/partial_deltaT
 //     //calculate the results of applying g_prime to the Image.
 //         //g_prime_I=image^14*g_prime[0]+image^13*g_prime[1]+image^12*g_prime[2]+image^11*g_prime[3]+...+image^2*g_prime[12]+image*g_prime[13]+g_prime[14]
