@@ -932,11 +932,11 @@ int main(int argc, char** argv) {
 
 
     //subscribe to /camera_array/cam0/image_raw
-    ros::Subscriber sub_image = n.subscribe("/camera_array/cam0/image_raw", 1000, img_callback);
+    ros::Subscriber sub_image = n.subscribe("/camera_array/cam0/image_raw", 1, img_callback);
 
 
 
-    ros::Subscriber sub_ = n.subscribe("/bluerov_controller/ar_tag_detector_2", 1000, tag_callback);
+    ros::Subscriber sub_ = n.subscribe("/bluerov_controller/ar_tag_detector_2", 1, tag_callback);
 
 
     
