@@ -13,15 +13,12 @@ using namespace std;
 #include <dynamic_reconfigure/Config.h>
 
 #include <image_transport/image_transport.h>
-   #include <cv_bridge/cv_bridge.h>
-   #include <sensor_msgs/image_encodings.h>
-   #include <opencv2/imgproc/imgproc.hpp>
-   #include <opencv2/highgui/highgui.hpp> 
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp> 
 
 #include <opencv2/core/core.hpp>
-
-
-
 
 
 using namespace cv;
@@ -100,8 +97,6 @@ Mat gradient(Mat img)
     //                                     -1, 0, 1,
     //                                     -1, 0, 1);
     // filter2D(img, grad_y, ddepth, kernel2);
-    
-
  
     abs_grad_y=abs( grad_y );
     //return the square sum
@@ -113,6 +108,7 @@ Mat gradient(Mat img)
     img_grad=abs_grad_x;
     return img_grad;
 }
+
 
 Mat gradient_x(Mat img)
 {
@@ -137,6 +133,7 @@ Mat gradient_x(Mat img)
     return grad_x;
 }
 
+
 Mat gradient_y(Mat img)
 {
     Mat grad_y;
@@ -155,12 +152,11 @@ Mat gradient_y(Mat img)
 
     //normalize the grad_y
    // normalize(grad_y, grad_y, -128, 127, NORM_MINMAX);
-
-
  
     abs_grad_y=abs( grad_y );
     return grad_y;
 }
+
 
 Mat gradient_64F(Mat img){
   Mat grad_x, grad_y;
@@ -201,7 +197,6 @@ Mat gradient_64F(Mat img){
     return img_grad;
 
 }
-
 
 
 double grad_score(Mat grad){
@@ -320,13 +315,6 @@ double update_exposure_nonlinear(double step_length, double exposure_time, doubl
     //float32 reprojection_error # sum of the squared reprojection error of each corner
     //geometry_msgs/PoseStamped pose # pose from solvePnP
     //geometry_msgs/Point[] corners # corners from marker detection in image coordinates
-
-
-
-
-
-
-
 void tag_callback(const stag_ros::StagMarkers::ConstPtr& msg)
 {
     int idx=0;
@@ -359,12 +347,8 @@ void tag_callback(const stag_ros::StagMarkers::ConstPtr& msg)
             max_x = (int)std::max(std::max(upperright_x,lowerright_x),std::max(lowerleft_x,upperleft_x));//+200;//+padding_x/8;//10;//25;
             max_y = (int)std::max(std::max(upperright_y,lowerright_y),std::max(lowerleft_y,upperleft_y));//+200;//+padding_y/8;//10;//25;
 
-
-
             //ROS_INFO("MAX_X: [%d]", max_x);
             //ROS_INFO("MIN_X: [%d]", min_x);
-
-
 
             //padding
             float padding_x=(max_x-min_x)*0.1;
@@ -381,21 +365,14 @@ void tag_callback(const stag_ros::StagMarkers::ConstPtr& msg)
             max_x=std::min(height,max_x);
             max_y=std::min(width,max_y);
 
-
             // ROS_INFO("MAX_X: [%d]", max_x);
             // ROS_INFO("MIN_X: [%d]", min_x);
             // ROS_INFO("MAX_Y: [%d]", max_y);
             // ROS_INFO("MIN_Y: [%d]", min_y);
-
-
         }   
     }
 
 }
-
-
-
-
 
 //  rostopic info /camera_array/cam0/image_raw
 // Type: sensor_msgs/Image
@@ -438,11 +415,10 @@ void update_exposure(double deltaT){
     //ros::Rate ros_rate(soft_framerate_);
             // //
         //     // //update the exposure time
-        double next_exposure_time = 0;
-        bool active_exposure_control=active_aec;//false;
-        bool active_exposure_control_ori=active_aec_ori;
-        bool grad_exposure_control=active_gec;//true;
-
+    double next_exposure_time = 0;
+    bool active_exposure_control=active_aec;//false;
+    bool active_exposure_control_ori=active_aec_ori;
+    bool grad_exposure_control=active_gec;//true;
 
     double exposure_time_=deltaT_now;
 
@@ -464,8 +440,6 @@ void update_exposure(double deltaT){
     // //print the size of image
     // ROS_INFO("I heard image.cols: [%d]", image.cols);
     // ROS_INFO("I heard image.rows: [%d]", image.rows);
-
-
     
     // ROS_INFO("min_x: [%d]", min_x);
     // ROS_INFO("min_y: [%d]", min_y);
@@ -497,14 +471,7 @@ void update_exposure(double deltaT){
     //compress the image in half
     //resize(image, image, Size(), 0.5, 0.5, INTER_LINEAR);
 
-
-
     //new approach
-
-
-
-
-
     //get the largest value in the image
     double maxVal;
     double deltaT = exposure_time_/1000000;
@@ -654,13 +621,9 @@ void update_exposure(double deltaT){
     minMaxLoc(pGpdT, &minVal1, &maxVal1);
     //ROS_INFO_STREAM("minVal for gradient is "<<minVal1);
 
-
-
     //Mat pGpdT = 2*Gradient_I.t()*gradient(1/(g_prime_I*deltaT));
     //index is still the index of the sorted gradient magnitude
     //Mat pGpdT = gradient(g_prime_I.mul(deltaT));
-    
-    
 
     //pMpdT = sum(W[i]*pGpdT[index])
     double pMpdT = 0;
@@ -722,14 +685,11 @@ void update_exposure(double deltaT){
         sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_with_box).toImageMsg();
         pub_image.publish(msg);
 
-
         //downsample the image
         //resize(image, image, Size(), 0.75, 0.75, INTER_LINEAR);
 
         //draw the bounding box using red color
         rectangle(image_with_box, Point(min_x,min_y), Point(max_x,max_y), Scalar(255,0,0), 2, 8, 0);
-
-            
 
         //get the largest value in the image
         double maxVal;
@@ -925,18 +885,14 @@ void update_exposure(double deltaT){
         // //compress the image in half
         //resize(image, image, Size(), 1, 1, INTER_LINEAR);
 
-
         image.convertTo(image, CV_64F); 
         // //compute gradient
 
         //normalize.  comment out for gradscore2
         normalize(image, image, 0, 1, NORM_MINMAX);
 
-
-
         double gamma =0;
         double step_len=step_len_gec;
-        
         
         gamma=get_gamma(image);
         if(info_mode)
@@ -957,10 +913,6 @@ void update_exposure(double deltaT){
         // cams[0].setFloatValue("ExposureTime", exposure_time_);
         
         set_exposure_param(exposure_time_);
-
-
-
-        
     }
 
 }
@@ -968,13 +920,10 @@ void update_exposure(double deltaT){
 
 void img_callback(const sensor_msgs::ImageConstPtr& msg)
 {
-
     //in this callback, we will convert the image to cv::Mat
     ros::param::get("/acquisition_node/exposure_time", deltaT_now);
 
-    
     ROS_INFO("exposure_time_ is %f", deltaT_now);
-
 
     if(active_aec==true){
         ROS_INFO("AAEC running");
@@ -1009,10 +958,7 @@ void img_callback(const sensor_msgs::ImageConstPtr& msg)
     }
 
     update_exposure(deltaT_now);
-
-
 }
-
 
 
 int main(int argc, char** argv) {
@@ -1027,16 +973,11 @@ int main(int argc, char** argv) {
     ROS_INFO("Node for exposure control is up and running.");
 
     // n.getParam("/changeParam/step_length_aec_", step_len_aec);
-
     // n.getParam("/changeParam/active_aec_", active_aec);
-
     // n.getParam("/changeParam/active_gec_", active_gec);
-
     // n.getParam("/changeParam/upper_bound_", max_bound);
 
-
     n.getParam("step_length_aec_", step_len_aec);
-
 
     n.getParam("step_length_gec_", step_len_gec);
 
@@ -1050,23 +991,16 @@ int main(int argc, char** argv) {
     n.getParam("info_mode",info_mode);
     ROS_INFO("Got upper_bound: %f",max_bound);
 
-
     image_transport::ImageTransport it(n);
     pub_image = it.advertise("/image_with_box", 1);
- 
 
 // "/camera_array/"+camera_name+"/image_raw"
     //subscribe to /camera_array/cam0/image_raw
     ros::Subscriber sub_image = n.subscribe(camera_name, 1, img_callback);
 
-
-
     ros::Subscriber sub_ = n.subscribe("/bluerov_controller/ar_tag_detector_2", 1, tag_callback);
-
-
     
     ros::spin();
-
 
     return 0;
         
