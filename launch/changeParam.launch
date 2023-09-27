@@ -18,6 +18,9 @@
 
  <param name="target_id" type="int" value="8" />
 
+ <param name="camera_name" type="string" value="cam_0" />
+
+  
 
  
 </launch>
