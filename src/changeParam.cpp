@@ -18,8 +18,6 @@ using namespace std;
 #include <stag_ros/StagMarkers.h>
 
 
-
-
 using namespace cv;
 
 double deltaT_now;
@@ -45,11 +43,8 @@ bool info_mode=false;
 string camera_name="";
 double momentum_pre=0;
 image_transport::Publisher pub_image;
-<<<<<<< HEAD
-=======
 ros::Publisher exposure_time_publisher;
 ros::Publisher active_algorithm_publisher;
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 // ros::NodeHandle n;
 
 void set_exposure_param(double new_deltaT){
@@ -228,14 +223,9 @@ void debug_check_mat(Mat target){
     for(int i=0;i<target.rows;i++){
         for(int j=0;j<target.cols;j++){
             double val=target.at<double>(i,j);
-<<<<<<< HEAD
-            if(info_mode)
-                ROS_INFO("val: %f",val);
-=======
             if(info_mode) {
                 ROS_INFO("val: %f",val);
             }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         }
     }
 }
@@ -309,13 +299,9 @@ double update_exposure_nonlinear(double step_length, double exposure_time, doubl
     
 
     double new_exposure_time = exposure_time *(1+alpha*step_length*(R-1));
-<<<<<<< HEAD
-    ROS_INFO("New exposure time: %f",new_exposure_time*1000000);
-=======
     if (info_mode) {
         ROS_INFO("New exposure time: %f",new_exposure_time*1000000);
     }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     return new_exposure_time;
 }
 
@@ -363,17 +349,8 @@ void tag_callback(const stag_ros::StagMarkers::ConstPtr& msg)
             max_x = (int)std::max(std::max(upperright_x,lowerright_x),std::max(lowerleft_x,upperleft_x));//+200;//+padding_x/8;//10;//25;
             max_y = (int)std::max(std::max(upperright_y,lowerright_y),std::max(lowerleft_y,upperleft_y));//+200;//+padding_y/8;//10;//25;
 
-<<<<<<< HEAD
-
-
             //ROS_INFO("MAX_X: [%d]", max_x);
             //ROS_INFO("MIN_X: [%d]", min_x);
-
-
-=======
-            //ROS_INFO("MAX_X: [%d]", max_x);
-            //ROS_INFO("MIN_X: [%d]", min_x);
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 
             //padding
             float padding_x=(max_x-min_x)*0.1;
@@ -390,19 +367,10 @@ void tag_callback(const stag_ros::StagMarkers::ConstPtr& msg)
             max_x=std::min(height,max_x);
             max_y=std::min(width,max_y);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
             // ROS_INFO("MAX_X: [%d]", max_x);
             // ROS_INFO("MIN_X: [%d]", min_x);
             // ROS_INFO("MAX_Y: [%d]", max_y);
             // ROS_INFO("MIN_Y: [%d]", min_y);
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         }   
     }
 
@@ -449,28 +417,16 @@ void update_exposure(double deltaT){
     //ros::Rate ros_rate(soft_framerate_);
             // //
         //     // //update the exposure time
-<<<<<<< HEAD
-        double next_exposure_time = 0;
-        bool active_exposure_control=active_aec;//false;
-        bool active_exposure_control_ori=active_aec_ori;
-        bool grad_exposure_control=active_gec;//true;
-
-=======
     double next_exposure_time = 0;
     bool active_exposure_control=active_aec;//false;
     bool active_exposure_control_ori=active_aec_ori;
     bool grad_exposure_control=active_gec;//true;
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 
     double exposure_time_=deltaT_now;
 
   //
     count_skip++; // TODO remove this?
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     if(!active_exposure_control && !grad_exposure_control && !active_aec_ori){
         set_exposure_param(0);
         ROS_INFO("Current exposure time: [%f]", exposure_time_);
@@ -485,11 +441,6 @@ void update_exposure(double deltaT){
     // //print the size of image
     // ROS_INFO("I heard image.cols: [%d]", image.cols);
     // ROS_INFO("I heard image.rows: [%d]", image.rows);
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     
     // ROS_INFO("min_x: [%d]", min_x);
     // ROS_INFO("min_y: [%d]", min_y);
@@ -528,14 +479,9 @@ void update_exposure(double deltaT){
     //Mat Gradient_I = gradient(image);
     Mat Gradient_x = gradient_x(image);
     Mat Gradient_y = gradient_y(image);
-<<<<<<< HEAD
-    if(info_mode)
-    ROS_INFO("Gradient x and y calculated");
-=======
     if(info_mode) {
         ROS_INFO("Gradient x and y calculated");
     }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 // //step 0: read the coefficients for 10th order polynomial g_prime.
     vector<double> g_prime;
     g_prime.push_back(2.23648003e-28);
@@ -557,14 +503,9 @@ void update_exposure(double deltaT){
     //from order 14 to 0
 // // //step 1: get the gradient magnitude
      Mat gradient_result = gradient(image);
-<<<<<<< HEAD
-    if(info_mode)
-         ROS_INFO("Gradient calculated");
-=======
     if(info_mode) {
         ROS_INFO("Gradient calculated");
     }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
      
      //construct a vector to store the gradient magnitude
     //vector<double> gradient_magnitude_1d=vector<double>(gradient_result.rows);
@@ -618,15 +559,10 @@ void update_exposure(double deltaT){
     int k = 5;
     int len = gradient_result.rows*gradient_result.cols;
     int scale_down = len * p;
-<<<<<<< HEAD
-    if(info_mode)
-    ROS_INFO("len is %d", len);
-=======
     if(info_mode) {
         ROS_INFO("len is %d", len);
     }
 
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     double wsum = 0;
     //N=log(lambda(1-sigma)+1) is a normalization factor
     double lambda = 10;
@@ -646,14 +582,9 @@ void update_exposure(double deltaT){
         }
         //ROS_INFO("SUM is %f", wsum);
     }
-<<<<<<< HEAD
-    if(info_mode)
-    ROS_INFO("Weighting DONE");
-=======
     if(info_mode) {
         ROS_INFO("Weighting DONE");
     }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 
     for (int i = 0; i < len; i++) {
         W[i] = W[i] / wsum;
@@ -667,14 +598,9 @@ void update_exposure(double deltaT){
         //      ROS_INFO("gr is %f", gradient_1d[i]);
         M_softperc += (W[i] * (gradient_1d[i]));
     }
-<<<<<<< HEAD
-    if(info_mode)
-    ROS_INFO("M_softperc is %f", M_softperc);
-=======
     if(info_mode) {
         ROS_INFO("M_softperc is %f", M_softperc);
     }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     Mat g_prime_I = Mat(image.size(),CV_64FC1,Scalar(0,0,0));//size should be the same as image
     Mat g_accum = Mat(image.size(),CV_64FC1,Scalar(1,1,1));//Mat::ones(image.size(), CV_32FC1);
     Mat image_cvt;
@@ -717,14 +643,9 @@ void update_exposure(double deltaT){
     }
 
     
-<<<<<<< HEAD
-    if(info_mode)
-    ROS_INFO("pMpdT is %f", pMpdT);
-=======
     if(info_mode) {
         ROS_INFO("pMpdT is %f", pMpdT);
     }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 // //step 5: update deltaT using the gradient descent method
 //     //deltaT = deltaT - alpha*pMpdT
     double alpha =step_len_aec;//0.000000001;//0.000001;//0.0000001; //0.00000000005;//0.0000000001;//0.000000005;//0.00000005
@@ -737,14 +658,9 @@ void update_exposure(double deltaT){
 
     //MOMENTUM VERSION
     double momentum = 0.9*momentum_pre+alpha*pMpdT;
-<<<<<<< HEAD
-    if(info_mode)
-    ROS_INFO_STREAM("momentum is "<<momentum*1000000);
-=======
     if(info_mode) {
         ROS_INFO_STREAM("momentum is "<<momentum*1000000);
     }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 
     if(abs(momentum)*1000000>1){
 
@@ -755,15 +671,6 @@ void update_exposure(double deltaT){
         //nextdeltaT = deltaT + alpha * pMpdT;
     }
     //MOMENTUM VERSION ENDS
-<<<<<<< HEAD
-    ROS_INFO_STREAM("Attempted Exposure time: " << nextdeltaT*1000000);
-    exposure_time_=nextdeltaT*1000000;
-    if(exposure_time_<=12)
-        exposure_time_=13;
-    
-    if(exposure_time_>max_bound)
-        exposure_time_=max_bound;
-=======
     if (info_mode) {
         ROS_INFO_STREAM("Attempted Exposure time: " << nextdeltaT*1000000);
     }
@@ -776,7 +683,6 @@ void update_exposure(double deltaT){
     if(exposure_time_>max_bound) {
         exposure_time_=max_bound;
     }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     //cams[0].setFloatValue(exposure_time_);
     set_exposure_param(exposure_time_);
             //cams[0].setFloatValue("AutoExposureTargetGreyValue", 90);
@@ -793,35 +699,21 @@ void update_exposure(double deltaT){
         sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_with_box).toImageMsg();
         pub_image.publish(msg);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         //downsample the image
         //resize(image, image, Size(), 0.75, 0.75, INTER_LINEAR);
 
         //draw the bounding box using red color
         rectangle(image_with_box, Point(min_x,min_y), Point(max_x,max_y), Scalar(255,0,0), 2, 8, 0);
 
-<<<<<<< HEAD
-            
-
-=======
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         //get the largest value in the image
         double maxVal;
         double deltaT = exposure_time_/1000000;
         //Mat Gradient_I = gradient(image);
         Mat Gradient_x = gradient_x(image);
         Mat Gradient_y = gradient_y(image);
-<<<<<<< HEAD
-        if(info_mode)
-        ROS_INFO("Gradient x and y calculated");
-=======
         if(info_mode) {
             ROS_INFO("Gradient x and y calculated");
         }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     // //step 0: read the coefficients for 10th order polynomial g_prime.
         vector<double> g_prime;
         g_prime.push_back(2.23648003e-28);
@@ -843,14 +735,9 @@ void update_exposure(double deltaT){
         //from order 14 to 0
     // // //step 1: get the gradient magnitude
         Mat gradient_result = gradient(image);
-<<<<<<< HEAD
-        if(info_mode)
-            ROS_INFO("Gradient calculated");
-=======
         if(info_mode) {
             ROS_INFO("Gradient calculated");
         }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         
         //construct a vector to store the gradient magnitude
         //vector<double> gradient_magnitude_1d=vector<double>(gradient_result.rows);
@@ -894,14 +781,9 @@ void update_exposure(double deltaT){
         int k = 5;
         int len = gradient_result.rows*gradient_result.cols;
         int scale_down = len * p;
-<<<<<<< HEAD
-        if(info_mode)
-        ROS_INFO("len is %d", len);
-=======
         if(info_mode) {
             ROS_INFO("len is %d", len);
         }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         double wsum = 0;
         //N=log(lambda(1-sigma)+1) is a normalization factor
         double lambda = 10;
@@ -921,14 +803,9 @@ void update_exposure(double deltaT){
             }
             //ROS_INFO("SUM is %f", wsum);
         }
-<<<<<<< HEAD
-        if(info_mode)
-        ROS_INFO("Weighting DONE");
-=======
         if(info_mode) {
             ROS_INFO("Weighting DONE");
         }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 
         for (int i = 0; i < len; i++) {
             W[i] = W[i] / wsum;
@@ -942,16 +819,11 @@ void update_exposure(double deltaT){
             //      ROS_INFO("gr is %f", gradient_1d[i]);
             M_softperc += (W[i] * (gradient_1d[i]));
         }
-<<<<<<< HEAD
-        if(info_mode)
-        ROS_INFO("M_softperc is %f", M_softperc);
-=======
 
         if(info_mode) {
             ROS_INFO("M_softperc is %f", M_softperc);
         }
 
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         Mat g_prime_I = Mat(image.size(),CV_64FC1,Scalar(0,0,0));//size should be the same as image
         Mat g_accum = Mat(image.size(),CV_64FC1,Scalar(1,1,1));//Mat::ones(image.size(), CV_32FC1);
         Mat image_cvt;
@@ -988,41 +860,28 @@ void update_exposure(double deltaT){
         }
 
         
-<<<<<<< HEAD
-        if(info_mode)
-        ROS_INFO("pMpdT is %f", pMpdT);
-=======
         if(info_mode) {
             ROS_INFO("pMpdT is %f", pMpdT);
         }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     // //step 5: update deltaT using the gradient descent method
     //     //deltaT = deltaT - alpha*pMpdT
         double alpha =0.00000001;//step_len_aec;//0.000000001;//0.000001;//0.0000001; //0.00000000005;//0.0000000001;//0.000000005;//0.00000005
         double nextdeltaT = deltaT;
 
-<<<<<<< HEAD
-        ROS_INFO("alpha*pMpdT is %f", alpha*pMpdT);
-=======
         if (info_mode) {
             ROS_INFO("alpha*pMpdT is %f", alpha*pMpdT);
         }
 
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         if(abs(pMpdT)>15000 && abs(alpha*pMpdT)*1000000>0.1){
 
             nextdeltaT = deltaT + alpha * pMpdT;
 
         }
-<<<<<<< HEAD
-        ROS_INFO_STREAM("Attempted Exposure time: " << nextdeltaT*1000000);
-=======
 
         if (info_mode) {
             ROS_INFO_STREAM("Attempted Exposure time: " << nextdeltaT*1000000);
         }
 
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         exposure_time_=nextdeltaT*1000000;
         if(exposure_time_<=12)
             exposure_time_=13;
@@ -1063,19 +922,11 @@ void update_exposure(double deltaT){
 
         double gamma =0;
         double step_len=step_len_gec;
-<<<<<<< HEAD
-        
-        
-        gamma=get_gamma(image);
-        if(info_mode)
-        ROS_INFO_STREAM("gamma is "<<gamma);
-=======
         
         gamma=get_gamma(image);
         if(info_mode) {
             ROS_INFO_STREAM("gamma is "<<gamma);
         }
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
         double deltaT = exposure_time_/1000000;
         //double nextdeltaT = update_exposure_linear(step_len, deltaT, gamma);
 
@@ -1111,14 +962,10 @@ void img_callback(const sensor_msgs::ImageConstPtr& msg)
 
     std_msgs::String alg_message;
     if(active_aec==true){
-<<<<<<< HEAD
-        ROS_INFO("AAEC running");
-=======
         if (info_mode) {
             ROS_INFO("AAEC running");
         }
         alg_message.data = "aaec";
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     }
     else if(active_gec==true){
         if (info_mode) {
@@ -1138,18 +985,10 @@ void img_callback(const sensor_msgs::ImageConstPtr& msg)
         }
         alg_message.data = "default";
     }
-<<<<<<< HEAD
-    else if(active_aec_ori==true){
-         ROS_INFO("AEC original running");
-    }
-    else
-        ROS_INFO("Default Exposure Control running");
-=======
 
     active_algorithm_publisher.publish(alg_message);
 
     
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 
     cv_bridge::CvImagePtr cv_ptr;
     try
@@ -1201,55 +1040,18 @@ int main(int argc, char** argv) {
     n.getParam("info_mode", info_mode);
     ROS_INFO("Exposure control using max upper_bound for exposure time: %f",max_bound);
 
-<<<<<<< HEAD
-    n.getParam("step_length_aec_", step_len_aec);
-
-
-    n.getParam("step_length_gec_", step_len_gec);
-
-    n.getParam("active_aec_", active_aec);
-    n.getParam("active_aec_ori", active_aec_ori);
-    n.getParam("active_gec_", active_gec);
-
-    n.getParam("upper_bound_", max_bound);
-    n.getParam("target_id", target_id);
-    n.getParam("cam_name",camera_name);
-    n.getParam("info_mode",info_mode);
-    ROS_INFO("Got upper_bound: %f",max_bound);
-
-
-    image_transport::ImageTransport it(n);
-    pub_image = it.advertise("/image_with_box", 1);
- 
-=======
     exposure_time_publisher = n.advertise<std_msgs::Float64>("exposure_time", 1);
     active_algorithm_publisher = n.advertise<std_msgs::String>("active_exposure_control_algorithm", 1);
 
     image_transport::ImageTransport it(n);
     pub_image = it.advertise("image_with_box", 1);
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
 
 // "/camera_array/"+camera_name+"/image_raw"
     //subscribe to /camera_array/cam0/image_raw
     ros::Subscriber sub_image = n.subscribe(camera_name, 1, img_callback);
-<<<<<<< HEAD
-
-
-
     ros::Subscriber sub_ = n.subscribe("/bluerov_controller/ar_tag_detector_2", 1, tag_callback);
 
-
-    
-=======
-    ros::Subscriber sub_ = n.subscribe("/bluerov_controller/ar_tag_detector_2", 1, tag_callback);
-
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
     ros::spin();
 
     return 0;
-<<<<<<< HEAD
-        
 }
-=======
-}
->>>>>>> 0d96dc97da9ef9a84c6e7739f4e0178b1d9845c7
