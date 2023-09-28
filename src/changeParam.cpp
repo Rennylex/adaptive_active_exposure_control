@@ -10,6 +10,7 @@ using namespace std;
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/Int32MultiArray.h>
 #include <std_msgs/String.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
@@ -46,6 +47,10 @@ string chosen_method;
 image_transport::Publisher pub_image;
 ros::Publisher exposure_time_publisher;
 ros::Publisher active_algorithm_publisher;
+ros::Publisher momentum_publisher;
+//publish the four corners of the bounding box in one message
+ros::Publisher bounding_box_publisher;
+
 // ros::NodeHandle n;
 
 void set_exposure_param(double new_deltaT){
@@ -460,7 +465,13 @@ void update_exposure(double deltaT){
 
     //draw the bounding box using red color
     rectangle(image_with_box, Point(min_x,min_y), Point(max_x,max_y), Scalar(255,0,0), 2, 8, 0);
-
+    //publish the bounding box topic
+    std_msgs::Int32MultiArray msg_box;
+    msg_box.data.push_back(min_x);
+    msg_box.data.push_back(min_y);
+    msg_box.data.push_back(max_x);
+    msg_box.data.push_back(max_y);
+    bounding_box_publisher.publish(msg_box);
     //publish the image with bounding box
     //define a publisher
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_with_box).toImageMsg();
@@ -663,13 +674,16 @@ void update_exposure(double deltaT){
     if(info_mode) {
         ROS_INFO_STREAM("momentum is "<<momentum*1000000);
     }
+    //publish momentum
+    std_msgs::Float64 msg_momentum;
+    msg_momentum.data=momentum*1000000;
+    momentum_publisher.publish(msg_momentum);
+
 
     if(abs(momentum)*1000000>1){
 
         momentum_pre=momentum;
         nextdeltaT = deltaT + momentum;
-
-        
         //nextdeltaT = deltaT + alpha * pMpdT;
     }
     //MOMENTUM VERSION ENDS
@@ -706,7 +720,13 @@ void update_exposure(double deltaT){
 
         //draw the bounding box using red color
         rectangle(image_with_box, Point(min_x,min_y), Point(max_x,max_y), Scalar(255,0,0), 2, 8, 0);
-
+        //publish the bounding box topic
+        std_msgs::Int32MultiArray msg_box;
+        msg_box.data.push_back(min_x);
+        msg_box.data.push_back(min_y);
+        msg_box.data.push_back(max_x);
+        msg_box.data.push_back(max_y);
+        bounding_box_publisher.publish(msg_box);
         //get the largest value in the image
         double maxVal;
         double deltaT = exposure_time_/1000000;
@@ -1064,7 +1084,8 @@ int main(int argc, char** argv) {
 
     exposure_time_publisher = n.advertise<std_msgs::Float64>("exposure_time", 1);
     active_algorithm_publisher = n.advertise<std_msgs::String>("active_exposure_control_algorithm", 1);
-
+    momentum_publisher = n.advertise<std_msgs::Float64>("momentum", 1);
+    bounding_box_publisher = n.advertise<std_msgs::Int32MultiArray>("bounding_box", 1);
     image_transport::ImageTransport it(n);
     pub_image = it.advertise("image_with_box", 1);
 
