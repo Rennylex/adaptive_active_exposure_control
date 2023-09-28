@@ -35,13 +35,14 @@ double step_len_aec;//=0.000000001;
 double step_len_gec;
 bool active_aec;// = false;
 bool active_gec;// = false;
-bool active_aec_ori;
+bool active_aec_ori="default";
 double max_bound;//=70000;
 int target_id;
 bool id_detected=false;
 bool info_mode=false;
 string camera_name="";
 double momentum_pre=0;
+string chosen_method;
 image_transport::Publisher pub_image;
 ros::Publisher exposure_time_publisher;
 ros::Publisher active_algorithm_publisher;
@@ -230,6 +231,7 @@ void debug_check_mat(Mat target){
     }
 }
 
+
 double get_gamma(Mat img){
     //search gamma from 1/1.9 to 1.9
     //double gamma_anchor[7]={1/1.9, 1/1.5, 1/1.2, 1, 1.2, 1.5, 1.9};
@@ -273,6 +275,7 @@ double get_gamma(Mat img){
     return gamma;
 }
 
+
 double update_exposure_linear(double step_length, double exposure_time, double gamma){
     double alpha=0;
     if(gamma>=1){
@@ -285,6 +288,7 @@ double update_exposure_linear(double step_length, double exposure_time, double g
     return new_exposure_time;
 }
 
+
 double update_exposure_nonlinear(double step_length, double exposure_time, double gamma,double d){
     double alpha=0;
     if(gamma>=1){
@@ -294,10 +298,8 @@ double update_exposure_nonlinear(double step_length, double exposure_time, doubl
         alpha=1;
     }
 
-
     double R=d*tan((2-gamma)*atan2(1,d)-atan2(1,d))+1;
     
-
     double new_exposure_time = exposure_time *(1+alpha*step_length*(R-1));
     if (info_mode) {
         ROS_INFO("New exposure time: %f",new_exposure_time*1000000);
@@ -1031,14 +1033,34 @@ int main(int argc, char** argv) {
 
     n.getParam("step_length_aec", step_len_aec);
     n.getParam("step_length_gec", step_len_gec);
-    n.getParam("active_aec", active_aec);
-    n.getParam("active_aec_ori", active_aec_ori);
-    n.getParam("active_gec", active_gec);
     n.getParam("upper_bound", max_bound);
     n.getParam("target_id", target_id);
     n.getParam("cam_name",camera_name);
     n.getParam("info_mode", info_mode);
+    n.getParam("chosen_method", chosen_method);
     ROS_INFO("Exposure control using max upper_bound for exposure time: %f",max_bound);
+
+    //deal with chosen_method
+    if(chosen_method=="aaec"){
+        active_aec=true;
+        active_gec=false;
+        active_aec_ori=false;
+    }
+    else if(chosen_method=="gec"){
+        active_aec=false;
+        active_gec=true;
+        active_aec_ori=false;
+    }
+    else if(chosen_method=="aec"){
+        active_aec=false;
+        active_gec=false;
+        active_aec_ori=true;
+    }
+    else{
+        active_aec=false;
+        active_gec=false;
+        active_aec_ori=false;
+    }
 
     exposure_time_publisher = n.advertise<std_msgs::Float64>("exposure_time", 1);
     active_algorithm_publisher = n.advertise<std_msgs::String>("active_exposure_control_algorithm", 1);

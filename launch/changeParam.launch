@@ -3,11 +3,10 @@
   </node>    
  <param name="step_length_aec" type="double" value=" 0.0000000000005" />
  <param name="step_length_gec" type="double" value="0.00000001" />
- <param name="active_aec" type="bool" value="true" />
- <param name="active_aec_ori" type="bool" value="false" />
- <param name="active_gec" type="bool" value="false" />
  <param name="upper_bound" type="double" value="50000" />
  <param name="target_id" type="int" value="8" />
- <param name="cam_name" type="string" value="/camera_array/cam1/image_raw" />
+ <param name="cam_name" type="string" value="/camera_array/cam0/image_raw" />
  <param name="info_mode" type="bool" value="true" />
+ <!-- "aaec". "aec", "gec", "default" -->
+ <param name="chosen_method" type="string" value="aaec" />
 </launch>
