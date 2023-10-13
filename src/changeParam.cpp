@@ -932,7 +932,7 @@ void update_exposure(double deltaT){
         min_y=max(0,min_y-25);
         max_x=min(max_x+25,image.cols);
         max_y=min(max_y+25,image.rows);
-        image = image(Rect(min_x,min_y,max_x-min_x,max_y-min_y));
+        //image = image(Rect(min_x,min_y,max_x-min_x,max_y-min_y));
         // //compress the image in half
         //resize(image, image, Size(), 1, 1, INTER_LINEAR);
 
