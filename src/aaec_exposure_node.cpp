@@ -34,6 +34,7 @@ double momentum_pre = 0;
 image_transport::Publisher image_publisher;
 ros::Publisher exposure_time_publisher;
 
+
 void set_exposure_dynamic_reconfigure_param(double new_exposure_time) {
     std_msgs::Float64 exposure_message;
     exposure_message.data = new_exposure_time;
@@ -341,22 +342,21 @@ void image_callback(const sensor_msgs::ImageConstPtr& msg)
 
 
 int main(int argc, char** argv) {
-    int result = 0;
-
-    ros::init(argc, argv, "changeParam");
+    ros::init(argc, argv, "aaec_exposure_control");
     ros::NodeHandle node_handle;
+    ros::NodeHandle private_node_handle("~");
     
     ROS_INFO("Node for exposure control is up and running.");
 
-    std::string image_topic = "";
-
-    node_handle.getParam("step_length_aec", step_length_aec);
-    node_handle.getParam("exposure_upper_bound", exposure_upper_bound);
-    node_handle.getParam("image_topic", image_topic);
-    node_handle.getParam("verbose_mode", verbose_mode);
-    node_handle.getParam("publish_debug_images", publish_debug_images);
+    std::string image_topic;
+    private_node_handle.getParam("step_length_aec", step_length_aec);
+    private_node_handle.getParam("exposure_upper_bound", exposure_upper_bound);
+    private_node_handle.getParam("image_topic", image_topic);
+    private_node_handle.getParam("verbose_mode", verbose_mode);
+    private_node_handle.getParam("publish_debug_images", publish_debug_images);
 
     ROS_INFO_STREAM("Exposure control using max upper_bound for exposure time: " << exposure_upper_bound);
+    ROS_INFO_STREAM("Step length: " << step_length_aec);
 
     image_transport::ImageTransport it(node_handle);
     image_publisher = it.advertise("image_with_box", 1);
