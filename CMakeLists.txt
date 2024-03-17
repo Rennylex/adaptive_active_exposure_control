@@ -47,6 +47,10 @@ include_directories(
 add_executable(aaec_exposure_node src/aaec_exposure_node.cpp)
 target_link_libraries(aaec_exposure_node ${catkin_LIBRARIES})
 
+if(catkin_EXPORTED_LIBRARIES)
+  add_dependencies(stag_ros ${catkin_EXPORTED_LIBRARIES})
+endif()
+
 install(DIRECTORY param/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/param)
 install(DIRECTORY launch/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
 install(DIRECTORY robots/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/robots)
