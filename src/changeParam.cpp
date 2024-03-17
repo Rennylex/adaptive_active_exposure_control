@@ -10,6 +10,7 @@ using namespace std;
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dynamic_reconfigure/Config.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/Int32MultiArray.h>
 #include <std_msgs/String.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
@@ -35,16 +36,21 @@ double step_len_aec;//=0.000000001;
 double step_len_gec;
 bool active_aec;// = false;
 bool active_gec;// = false;
-bool active_aec_ori;
+bool active_aec_ori="default";
 double max_bound;//=70000;
 int target_id;
 bool id_detected=false;
 bool info_mode=false;
 string camera_name="";
 double momentum_pre=0;
+string chosen_method;
 image_transport::Publisher pub_image;
 ros::Publisher exposure_time_publisher;
 ros::Publisher active_algorithm_publisher;
+ros::Publisher momentum_publisher;
+//publish the four corners of the bounding box in one message
+ros::Publisher bounding_box_publisher;
+
 // ros::NodeHandle n;
 
 void set_exposure_param(double new_deltaT){
@@ -230,6 +236,7 @@ void debug_check_mat(Mat target){
     }
 }
 
+
 double get_gamma(Mat img){
     //search gamma from 1/1.9 to 1.9
     //double gamma_anchor[7]={1/1.9, 1/1.5, 1/1.2, 1, 1.2, 1.5, 1.9};
@@ -273,6 +280,7 @@ double get_gamma(Mat img){
     return gamma;
 }
 
+
 double update_exposure_linear(double step_length, double exposure_time, double gamma){
     double alpha=0;
     if(gamma>=1){
@@ -285,6 +293,7 @@ double update_exposure_linear(double step_length, double exposure_time, double g
     return new_exposure_time;
 }
 
+
 double update_exposure_nonlinear(double step_length, double exposure_time, double gamma,double d){
     double alpha=0;
     if(gamma>=1){
@@ -294,10 +303,8 @@ double update_exposure_nonlinear(double step_length, double exposure_time, doubl
         alpha=1;
     }
 
-
     double R=d*tan((2-gamma)*atan2(1,d)-atan2(1,d))+1;
     
-
     double new_exposure_time = exposure_time *(1+alpha*step_length*(R-1));
     if (info_mode) {
         ROS_INFO("New exposure time: %f",new_exposure_time*1000000);
@@ -457,7 +464,13 @@ void update_exposure(double deltaT){
 
     //draw the bounding box using red color
     rectangle(image_with_box, Point(min_x,min_y), Point(max_x,max_y), Scalar(255,0,0), 2, 8, 0);
-
+    //publish the bounding box topic
+    std_msgs::Int32MultiArray msg_box;
+    msg_box.data.push_back(min_x);
+    msg_box.data.push_back(min_y);
+    msg_box.data.push_back(max_x);
+    msg_box.data.push_back(max_y);
+    bounding_box_publisher.publish(msg_box);
     //publish the image with bounding box
     //define a publisher
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_with_box).toImageMsg();
@@ -660,13 +673,16 @@ void update_exposure(double deltaT){
     if(info_mode) {
         ROS_INFO_STREAM("momentum is "<<momentum*1000000);
     }
+    //publish momentum
+    std_msgs::Float64 msg_momentum;
+    msg_momentum.data=momentum*1000000;
+    momentum_publisher.publish(msg_momentum);
+
 
     if(abs(momentum)*1000000>1){
 
         momentum_pre=momentum;
         nextdeltaT = deltaT + momentum;
-
-        
         //nextdeltaT = deltaT + alpha * pMpdT;
     }
     //MOMENTUM VERSION ENDS
@@ -703,7 +719,13 @@ void update_exposure(double deltaT){
 
         //draw the bounding box using red color
         rectangle(image_with_box, Point(min_x,min_y), Point(max_x,max_y), Scalar(255,0,0), 2, 8, 0);
-
+        //publish the bounding box topic
+        std_msgs::Int32MultiArray msg_box;
+        msg_box.data.push_back(min_x);
+        msg_box.data.push_back(min_y);
+        msg_box.data.push_back(max_x);
+        msg_box.data.push_back(max_y);
+        bounding_box_publisher.publish(msg_box);
         //get the largest value in the image
         double maxVal;
         double deltaT = exposure_time_/1000000;
@@ -909,7 +931,7 @@ void update_exposure(double deltaT){
         min_y=max(0,min_y-25);
         max_x=min(max_x+25,image.cols);
         max_y=min(max_y+25,image.rows);
-        image = image(Rect(min_x,min_y,max_x-min_x,max_y-min_y));
+        //image = image(Rect(min_x,min_y,max_x-min_x,max_y-min_y));
         // //compress the image in half
         //resize(image, image, Size(), 1, 1, INTER_LINEAR);
 
@@ -1030,18 +1052,39 @@ int main(int argc, char** argv) {
 
     n.getParam("step_length_aec", step_len_aec);
     n.getParam("step_length_gec", step_len_gec);
-    n.getParam("active_aec", active_aec);
-    n.getParam("active_aec_ori", active_aec_ori);
-    n.getParam("active_gec", active_gec);
     n.getParam("upper_bound", max_bound);
     n.getParam("target_id", target_id);
     n.getParam("cam_name",camera_name);
     n.getParam("info_mode", info_mode);
+    n.getParam("chosen_method", chosen_method);
     ROS_INFO("Exposure control using max upper_bound for exposure time: %f",max_bound);
+
+    //deal with chosen_method
+    if(chosen_method=="aaec"){
+        active_aec=true;
+        active_gec=false;
+        active_aec_ori=false;
+    }
+    else if(chosen_method=="gec"){
+        active_aec=false;
+        active_gec=true;
+        active_aec_ori=false;
+    }
+    else if(chosen_method=="aec"){
+        active_aec=false;
+        active_gec=false;
+        active_aec_ori=true;
+    }
+    else{
+        active_aec=false;
+        active_gec=false;
+        active_aec_ori=false;
+    }
 
     exposure_time_publisher = n.advertise<std_msgs::Float64>("exposure_time", 1);
     active_algorithm_publisher = n.advertise<std_msgs::String>("active_exposure_control_algorithm", 1);
-
+    momentum_publisher = n.advertise<std_msgs::Float64>("momentum", 1);
+    bounding_box_publisher = n.advertise<std_msgs::Int32MultiArray>("bounding_box", 1);
     image_transport::ImageTransport it(n);
     pub_image = it.advertise("image_with_box", 1);
 
