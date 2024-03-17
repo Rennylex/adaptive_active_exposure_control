@@ -1,28 +1,19 @@
 <?xml version="1.0"?>
 
 <launch>
-
-
     <node pkg="rosbag" type="record" name="rosbag_cam_record"
-          args="record -o /home/rlab/lex_data /camera_array/cam0/image_raw/compressed /bluerov_controller/ar_tag_detector_2
-"/> 
+          args="record -o /home/rlab/lex_data /camera_array/cam0/image_raw/compressed /bluerov_controller/ar_tag_detector_2"/> 
 
-
-
-    <!--<include file="$(find droplet_underwater_assembly)/description.launch" /> -->
     <include file="$(find exposure_control)/launch/description.launch" />
-    <!--<node pkg="nodelet" type="nodelet" name="bluerov_nodelet_manager" args="manager" output="screen" respawn="true"> -->
+
     <node pkg="nodelet" type="nodelet" name="bluerov_nodelet_manager" args="manager" output="screen" respawn="true">
       <param name="num_worker_threads" value="1" />
     </node>
 
     <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition_node.launch">
-      <!--<arg name="nodelet_manager_name" value="bluerov_nodelet_manager"/> -->
-      <!--<arg name="config_file" value="$(find downward_camera_localizer)/param/flir_senko_land_calibration.yaml"/> -->
       <arg name="config_file" value="$(find exposure_control)/param/flir_senko_land_calibration.yaml"/>
-      <!--<arg name="start_nodelet_manager" value="true"/>-->
       <arg name="color" value="false"/>
-      <arg name="exposure_time" value="7000"/>
+      <arg name="exposure_time" value="0"/>
       <arg name="target_grey_value" value="0"/>
     </include>
 

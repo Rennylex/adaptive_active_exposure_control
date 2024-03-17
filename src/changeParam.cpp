@@ -373,7 +373,6 @@ void tag_callback(const stag_ros::StagMarkers::ConstPtr& msg)
             // ROS_INFO("MIN_Y: [%d]", min_y);
         }   
     }
-
 }
 
 //  rostopic info /camera_array/cam0/image_raw
@@ -422,7 +421,7 @@ void update_exposure(double deltaT){
     bool active_exposure_control_ori=active_aec_ori;
     bool grad_exposure_control=active_gec;//true;
 
-    double exposure_time_=deltaT_now;
+    double exposure_time_ = deltaT_now;
 
   //
     count_skip++; // TODO remove this?
