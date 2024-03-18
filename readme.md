@@ -14,7 +14,18 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 
 ## 2. Tutorial
   ### aaec_exposure_control node:
-  The aaec_exposure_control_standalone.launch file, along with the aaec_exposure_control.cpp source code, is designed to automatically adjust the exposure time of a camera based on the image's brightness and contrast. This system is especially useful in robotics applications where lighting conditions can vary significantly. The code uses ROS (Robot Operating System) for communication and OpenCV for image processing.
+  The aaec_exposure_control_standalone.launch file, along with the aaec_exposure_control.cpp source code, is designed to automatically adjust the exposure time of a camera based on the image's gradient info. The code uses ROS (Robot Operating System) for communication and OpenCV for image processing.
+
+
+
+  #### Parameters
+  run_camera_node: If set to true, this parameter will also start the camera node as part of the launch. Default value is false.
+  image_topic: The ROS topic on which raw images from the camera are published. Default is /camera_array/cam1/image_raw.
+  verbose_mode: Enables detailed logging if set to true. Useful for debugging. Default is false.
+  publish_debug_images: When enabled, publishes images with diagnostic information overlay. Default is true.
+  exposure_upper_bound: The maximum allowable exposure time in microseconds. Default is 20000.
+  default_exposure_time: The initial exposure time in microseconds before any adjustments. Default is 5000.
+  step_length_aec: Defines the step size for automatic exposure correction. Smaller values mean finer adjustments.
 
   ### ChangeParams node:
   This package provides 3 exposure control methods: Active Exposure Control(AEC), Gamma-based Exposure Control(GEC), and default. To use the one you want, simpy set the corresponding bool value to true, and the rest to false in the  "changeParam.launch" under launch folder.
