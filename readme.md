@@ -14,7 +14,7 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 
 ## 2. Tutorial
   ### aaec_exposure_control node:
-  The aaec_exposure_control_standalone.launch file, along with the aaec_exposure_control.cpp source code, is designed to automatically adjust the exposure time of a camera based on the image's gradient info. The code uses ROS (Robot Operating System) for communication and OpenCV for image processing.
+  The aaec_exposure_control_standalone.launch file, along with the aaec_exposure_control.cpp source code, is designed to use AAEC to automatically adjust the exposure time of a camera based on the image's gradient info. The code uses ROS (Robot Operating System) for communication and OpenCV for image processing.
 
 
 
