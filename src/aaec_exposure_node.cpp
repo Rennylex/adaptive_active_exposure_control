@@ -30,6 +30,7 @@ bool verbose_mode = false;
 bool region_is_set = false;
 bool publish_debug_images = false;
 double momentum_pre = 0;
+double default_exposure_time = 0.0;
 
 image_transport::Publisher image_publisher;
 ros::Publisher exposure_time_publisher;
@@ -103,36 +104,67 @@ Mat get_gradient_y(Mat img) {
 
 
 void region_callback(const exposure_control::ExposureRegion& msg) {
+    int min_x_ = msg.min_x;
+    int max_x_ = msg.max_x;
+    int min_y_ = msg.min_y;
+    int max_y_ = msg.max_y;
+
+    if (max_x_ <= min_x_ || max_y_ <= min_y_) {
+        ROS_WARN("Invalid region specified. Ignoring");
+        region_is_set = false;
+        momentum_pre = 0.0;
+        return;
+    }
+
+    float padding_x = (max_x_ - min_x_) * 0.1;
+    float padding_y = (max_y_ - min_y_) * 0.1;
+
+    min_x_ = min_x_ - padding_x;
+    min_y_ = min_y_ - padding_y;
+    max_x_ = max_x_ + padding_x;
+    max_y_ = max_y_ + padding_y;
+
+    min_x = std::max(0, min_x_);
+    min_y = std::max(0, min_y_);
+
+    max_x = std::min(static_cast<int>(msg.image_width), max_x_);
+    max_y = std::min(static_cast<int>(msg.image_height), max_y_);
+
     region_is_set = true;
-    min_x = msg.min_x;
-    max_x = msg.max_x;
-    min_y = msg.min_y;
-    max_y = msg.max_y;
-
-    float padding_x = (max_x - min_x) * 0.1;
-    float padding_y = (max_y - min_y) * 0.1;
-
-    min_x=min_x - padding_x;
-    min_y=min_y - padding_y;
-    max_x=max_x + padding_x;
-    max_y=max_y + padding_y;
-
-    min_x = std::max(0, min_x);
-    min_y = std::max(0, min_y);
-
-    max_x = std::min(static_cast<int>(msg.image_height), max_x);
-    max_y = std::min(static_cast<int>(msg.image_width), max_y);
+    if (verbose_mode) {
+        ROS_INFO_STREAM("Set region of interest to [ (" << min_x << "," << min_y << "), (" << max_x << "," << max_y << ") ]");
+    }
 }
 
 
 void update_exposure(Mat image) {
+    auto image_original = image.clone();
     image.convertTo(image, CV_64FC1);
 
     double exposure_time_;
     ros::param::get("/acquisition_node/exposure_time", exposure_time_);
 
+    if (exposure_time_ == 0.0) {
+        exposure_time_ = default_exposure_time;
+        if (verbose_mode) {
+            ROS_INFO_STREAM("Setting exposure_time_ to default value " << exposure_time_);
+        }
+    }
+
     if (verbose_mode) {
         ROS_INFO("exposure_time_ is %f", exposure_time_);
+    }
+
+    if (publish_debug_images) {
+        Mat image_with_box = image_original.clone();
+        cvtColor(image_with_box, image_with_box, CV_GRAY2RGB);
+
+        if (region_is_set) {
+            rectangle(image_with_box, Point(min_x,min_y), Point(max_x,max_y), Scalar(255,0,0), 2, 8, 0);
+        }
+
+        sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_with_box).toImageMsg();
+        image_publisher.publish(msg);
     }
 
     if(!region_is_set){
@@ -151,16 +183,8 @@ void update_exposure(Mat image) {
             )
         );
 
-        if (publish_debug_images) {
-            Mat image_with_box = image.clone();
-            cvtColor(image_with_box, image_with_box, CV_GRAY2RGB);
-            rectangle(image_with_box, Point(min_x,min_y), Point(max_x,max_y), Scalar(255,0,0), 2, 8, 0);
-            sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_with_box).toImageMsg();
-            image_publisher.publish(msg);
-        }
-
         double maxVal;
-        double deltaT = exposure_time_/1000000;
+        double deltaT = exposure_time_/1000000.0;
 
         Mat gradient_x = get_gradient_x(image);
         Mat gradient_y = get_gradient_y(image);
@@ -296,21 +320,26 @@ void update_exposure(Mat image) {
         double nextdeltaT = deltaT;
 
         //MOMENTUM VERSION
-        double momentum = 0.9*momentum_pre+alpha*pMpdT;
+        double momentum = 0.9 * momentum_pre + alpha * pMpdT;
         if(verbose_mode) {
-            ROS_INFO_STREAM("momentum is "<<momentum*1000000);
+            ROS_INFO_STREAM("momentum is "<< momentum * 1000000.0);
         }
 
-        if(abs(momentum)*1000000>1){
+        if(abs(momentum) * 1000000.0 > 1){
             momentum_pre = momentum;
             nextdeltaT = deltaT + momentum;
         }
+        else {
+            if (verbose_mode) {
+                ROS_INFO_STREAM("Momentum is too small. Not changing exposure time.");
+            }
+        }
         //MOMENTUM VERSION ENDS
         if (verbose_mode) {
-            ROS_INFO_STREAM("Attempted Exposure time: " << nextdeltaT * 1000000);
+            ROS_INFO_STREAM("Attempted Exposure time: " << nextdeltaT * 1000000.0);
         }
 
-        exposure_time_ = nextdeltaT * 1000000;
+        exposure_time_ = nextdeltaT * 1000000.0;
         if(exposure_time_ <= 12) {
             exposure_time_ = 13;
         }
@@ -351,12 +380,14 @@ int main(int argc, char** argv) {
     std::string image_topic;
     private_node_handle.getParam("step_length_aec", step_length_aec);
     private_node_handle.getParam("exposure_upper_bound", exposure_upper_bound);
+    private_node_handle.getParam("default_exposure_time", default_exposure_time);
     private_node_handle.getParam("image_topic", image_topic);
     private_node_handle.getParam("verbose_mode", verbose_mode);
     private_node_handle.getParam("publish_debug_images", publish_debug_images);
 
     ROS_INFO_STREAM("Exposure control using max upper_bound for exposure time: " << exposure_upper_bound);
     ROS_INFO_STREAM("Step length: " << step_length_aec);
+    ROS_INFO_STREAM("Using verbose mode: " << verbose_mode);
 
     image_transport::ImageTransport it(node_handle);
     image_publisher = it.advertise("image_with_box", 1);
