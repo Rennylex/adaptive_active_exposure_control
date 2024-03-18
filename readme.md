@@ -18,7 +18,7 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 
 
 
-  #### Parameters
+  #### Launch file parameters explained
   **`run_camera_node`**: If set to true, this parameter will also start the camera node as part of the launch. Default value is false.  
   **`image_topic`**: The ROS topic on which raw images from the camera are published. Default is `/camera_array/cam1/image_raw`.  
   **`verbose_mode`**: Enables detailed logging if set to true. Useful for debugging. Default is false.  
