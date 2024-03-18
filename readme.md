@@ -38,7 +38,7 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
   **`void image_callback(const sensor_msgs::ImageConstPtr& msg)`**: Callback for processing incoming images from the specified ROS topic.  
 
   ### ChangeParams node:
-  This package provides 3 exposure control methods: Active Exposure Control(AEC), Gamma-based Exposure Control(GEC), and default. 
+  This node provides 3 exposure control methods: Active Exposure Control(AEC), Gamma-based Exposure Control(GEC), and default. 
   
   
   #### how to run
