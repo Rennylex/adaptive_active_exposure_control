@@ -8,7 +8,9 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
   For robots operating in the field, visual input is a significant source for positioning and locating. One of the main stream solution is to use fiducial marker to provide a fixed anchor point for the robots as reference. However, the harsh lighting condition (e.g.  underwater caustics, advarsarial lighting, etc), will sometimes make it difficult for robot to get a precise reading of the markers location. In order to overcome this challenge, AAEC is proposed.
   
   #### Features
-  
+  AAEC uses 2 features to ensure its robustness and efficiency:
+  1. Region of interest: the AAEC algorithm will automatically lock on a specific image region of the fiducial marker (in this case, STAG), which will siginificantly reduce the computational cost.
+  2. Momentum-based gradient descending: This ensures the extraodinary exposure time convergence speed of AAEC
 
 
 ### 2. Quick Start
