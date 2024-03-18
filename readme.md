@@ -1,4 +1,22 @@
-This package provides 3 exposure control methods: Active Exposure Control(AEC), Gamma-based Exposure Control(GEC), and default. To use the one you want, simpy set the corresponding bool value to true, and the rest to false in the  "changeParam.launch" under launch folder.
+
+
+## Active Adaptive Exposure Control package
+Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and accurate fiducial marker detection in the field for monocular camera.
+
+### 1. Overview
+  #### Task
+  For robots operating in the field, visual input is a significant source for positioning and locating. One of the main stream solution is to use fiducial marker to provide a fixed anchor point for the robots as reference. However, the harsh lighting condition (e.g.  underwater caustics, advarsarial lighting, etc), will sometimes make it difficult for robot to get a precise reading of the markers location. In order to overcome this challenge, AAEC is proposed.
+  
+  #### Features
+  
+
+
+### 2. Quick Start
+  #### aaec_exposure_control node:
+  
+
+  #### ChangeParams node:
+  This package provides 3 exposure control methods: Active Exposure Control(AEC), Gamma-based Exposure Control(GEC), and default. To use the one you want, simpy set the corresponding bool value to true, and the rest to false in the  "changeParam.launch" under launch folder.
 
 
 TO adjust other parameters like step length and upper bound: change the "changeParam.launch" in the launch folder.
@@ -13,16 +31,9 @@ To run the project:
 roslaunch stag_ros stag_and_fisheye_with_exposure_control.launch
 
 
-
-## Active Adaptive Exposure Control package
-
-### Overview
-
-### Quick Start
-
 ### Tutorial
-#### Node introduction
-#### Parameters explanation
+  #### Node introduction
+  #### Parameters explanation
 
 
 
