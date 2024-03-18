@@ -23,9 +23,9 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
   **`image_topic`**: The ROS topic on which raw images from the camera are published. Default is `/camera_array/cam1/image_raw`.  
   **`verbose_mode`**: Enables detailed logging if set to true. Useful for debugging. Default is false.  
   **`publish_debug_images`**: When enabled, publishes images with diagnostic information overlay. Default is true.  
-  **`exposure_upper_bound`**: The maximum allowable exposure time in microseconds. Default is 20000.  
-  **`default_exposure_time`**: The initial exposure time in microseconds before any adjustments. Default is 5000.  
-  **`step_length_aec`**: Defines the step size for automatic exposure correction. Smaller values mean finer adjustments.  
+  **`exposure_upper_bound`**: The maximum allowable exposure time in **microseconds**. Default is 20000.  
+  **`default_exposure_time`**: The initial exposure time in **microseconds** before any adjustments. Default is 5000.  
+  **`step_length_aec`**: Defines the step size for AAEC's exposure correction. Smaller values mean finer adjustments.  
 
 
   #### Source code key variables and functions
