@@ -14,7 +14,7 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 
 ## 2. Tutorial
   ### aaec_exposure_control node:
-  
+  The aaec_exposure_control_standalone.launch file, along with the aaec_exposure_control.cpp source code, is designed to automatically adjust the exposure time of a camera based on the image's brightness and contrast. This system is especially useful in robotics applications where lighting conditions can vary significantly. The code uses ROS (Robot Operating System) for communication and OpenCV for image processing.
 
   ### ChangeParams node:
   This package provides 3 exposure control methods: Active Exposure Control(AEC), Gamma-based Exposure Control(GEC), and default. To use the one you want, simpy set the corresponding bool value to true, and the rest to false in the  "changeParam.launch" under launch folder.
