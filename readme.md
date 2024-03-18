@@ -11,3 +11,18 @@ to the "launch" folder under spinnaker_sdk_camera_driver. The line starting node
 To run the project:
 
 roslaunch stag_ros stag_and_fisheye_with_exposure_control.launch
+
+
+
+## Active Adaptive Exposure Control package
+
+### Overview
+
+### Quick Start
+
+### Tutorial
+#### Node introduction
+#### Parameters explanation
+
+
+
