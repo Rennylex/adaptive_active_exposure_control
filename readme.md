@@ -3,7 +3,7 @@
 # Active Adaptive Exposure Control package
 Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and accurate fiducial marker detection in the field for monocular camera.
 
-(Below: underwater robot trying to identify the fiducial markers. Caustics is a challenge to the traditonal exposure control method)
+(Below: underwater robot trying to identify the fiducial markers. Caustics is a challenge to the traditonal exposure control method, under-exposure and over-exposure will both lead to unideal imaging)
 ![Alt text](/images/auv.gif)
 
 
