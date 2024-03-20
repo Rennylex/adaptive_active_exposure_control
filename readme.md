@@ -59,7 +59,7 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 
  ### follow_aruco.py:
 
- ArucoExposureTracker Python class is a sample designed for use in robotic systems that require dynamic exposure control based on the position of an ArUco marker within the camera's field of view. 
+ `ArucoExposureTracker` Python class is a sample designed for use in robotic systems that require dynamic exposure control based on the position of an ArUco marker within the camera's field of view. 
 
  #### Parameters configuration
  
