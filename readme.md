@@ -57,7 +57,7 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 
 
 
- ### follow_aruco.py
+ ### follow_aruco.py:
 
  ArucoExposureTracker Python class is a sample designed for use in robotic systems that require dynamic exposure control based on the position of an ArUco marker within the camera's field of view. 
 
@@ -67,6 +67,15 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 **`MISSING_MARKER_FRAMES`**: The number of consecutive frames the marker can be missing before the exposure region is reset to default (invalid region), indicating that the whole frame should be considered for exposure adjustment.  
 **`CAMERA_IMAGE_TOPIC`**: The ROS topic on which camera images are published.  
 **`IMAGE_WIDTH and IMAGE_HEIGHT`**: Dimensions of the images being processed, used when publishing the exposure region.  
+
+#### How to run:
+Ensure ROS, cv_bridge, and OpenCV are installed and properly configured in your environment.
+
+Customize the TRACKED_MARKER_ID, MISSING_MARKER_FRAMES, CAMERA_IMAGE_TOPIC, IMAGE_WIDTH, and IMAGE_HEIGHT parameters as needed for your specific application.
+
+Run the script in a ROS environment where a camera node publishes images to CAMERA_IMAGE_TOPIC.
+
+Observe the /target_region topic for updates to the exposure region based on the detection of the specified ArUco marker.
 
 
   
