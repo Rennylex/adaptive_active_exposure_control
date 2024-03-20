@@ -25,6 +25,8 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
   2. Momentum-based gradient descending: This ensures the extraodinary exposure time convergence speed of AAEC
 
 (below: fast converging thanks to the 2 features of AAEC)
+
+
 ![Alt text](/images/converging.gif)
 
 
