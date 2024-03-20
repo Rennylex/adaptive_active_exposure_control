@@ -8,6 +8,8 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 
 
 ![Alt text](/images/sight_underwater.gif)
+\
+
 [![Watch the video](/images/youtube-video-screenshot.png)](https://youtu.be/5XBcN29iltI)
 
 ## 1. Overview
