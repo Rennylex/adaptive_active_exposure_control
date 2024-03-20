@@ -19,7 +19,7 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
   1. Region of interest: the AAEC algorithm will automatically lock on a specific image region of the fiducial marker (in this case, STAG), which will siginificantly reduce the computational cost.
   2. Momentum-based gradient descending: This ensures the extraodinary exposure time convergence speed of AAEC
 
-![Alt text](/images/sight underwater.gif)
+![Alt text](/images/sight_underwater.gif)
 
 ## 2. Tutorial
   ### aaec_exposure_control node:
