@@ -5,6 +5,8 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 
 (Below: underwater robot trying to identify the fiducial markers. Caustics is a challenge to the traditonal exposure control method)
 ![Alt text](/images/auv.gif)
+
+
 ![Alt text](/images/sight_underwater.gif)
 [![Watch the video](/images/youtube-video-screenshot.png)](https://youtu.be/5XBcN29iltI)
 
