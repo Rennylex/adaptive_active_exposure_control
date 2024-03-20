@@ -55,6 +55,22 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
   **`void update_exposure(Mat image)`**: Main logic for adjusting the exposure based on the image content and set parameters. 
   **`void image_callback(const sensor_msgs::ImageConstPtr& msg)`**: Callback for processing incoming images from the specified ROS topic.  
 
+
+
+ ### follow_aruco.py
+
+ ArucoExposureTracker Python class is a sample designed for use in robotic systems that require dynamic exposure control based on the position of an ArUco marker within the camera's field of view. 
+
+ #### Parameters configuration
+ 
+**`TRACKED_MARKER_ID`**: The ID of the ArUco marker that the tracker will look for within the camera's images.  
+**`MISSING_MARKER_FRAMES`**: The number of consecutive frames the marker can be missing before the exposure region is reset to default (invalid region), indicating that the whole frame should be considered for exposure adjustment.  
+**`CAMERA_IMAGE_TOPIC`**: The ROS topic on which camera images are published.  
+**`IMAGE_WIDTH and IMAGE_HEIGHT`**: Dimensions of the images being processed, used when publishing the exposure region.  
+
+
+  
+
   ### ChangeParams node:
   This node provides 3 exposure control methods: Active Exposure Control(AEC), Gamma-based Exposure Control(GEC), and default. 
   
