@@ -6,6 +6,8 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 
 ![Alt text](/images/auv.gif)
 
+[![Watch the video](/images/youtube-video-screenshot.png)](https://youtu.be/5XBcN29iltI)
+
 ## 1. Overview
   ### Task
   For robots operating in the field, visual input is a significant source for positioning and locating. One of the main stream solution is to use fiducial marker to provide a fixed anchor point for the robots as reference. However, the harsh lighting condition (e.g.  underwater caustics, advarsarial lighting, etc), will sometimes make it difficult for robot to get a precise reading of the markers location. In order to overcome this challenge, AAEC is proposed.
