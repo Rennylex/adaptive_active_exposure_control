@@ -69,13 +69,13 @@ Active Adaptive Exposure Control (AAEC) aims to provide robust, constant, and ac
 **`IMAGE_WIDTH and IMAGE_HEIGHT`**: Dimensions of the images being processed, used when publishing the exposure region.  
 
 #### How to run:
-  Ensure ROS, cv_bridge, and OpenCV are installed and properly configured in your environment.
+  1 Ensure ROS, cv_bridge, and OpenCV are installed and properly configured in your environment.
   
-  Customize the `TRACKED_MARKER_ID`, `MISSING_MARKER_FRAMES`, `CAMERA_IMAGE_TOPIC`, `IMAGE_WIDTH`, and `IMAGE_HEIGHT` parameters as needed for your specific application.
+  2 Customize the `TRACKED_MARKER_ID`, `MISSING_MARKER_FRAMES`, `CAMERA_IMAGE_TOPIC`, `IMAGE_WIDTH`, and `IMAGE_HEIGHT` parameters as needed for your specific application.
   
-  Run the script in a ROS environment where a camera node publishes images to `CAMERA_IMAGE_TOPIC`.
+  3 Run the script in a ROS environment where a camera node publishes images to `CAMERA_IMAGE_TOPIC`.
   
-  Observe the `/target_region` topic for updates to the exposure region based on the detection of the specified ArUco marker.
+  4 Observe the `/target_region` topic for updates to the exposure region based on the detection of the specified ArUco marker.
   
 
   
