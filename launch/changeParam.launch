@@ -1,8 +1,10 @@
 <launch>
   <node pkg="exposure_control" type="changeParam" name="changeParam" args="" output="screen" respawn="false" >
   </node>    
- <param name="step_length_aec" type="double" value=" 0.0000000000005" />
- <param name="step_length_gec" type="double" value="0.00000001" />
+ <param name="step_length_aec" type="double" value=" 0.000000000001" />
+  <!--0.0000000000005,0.0000000001reg,0.000000000001dark-->
+ <param name="step_length_gec" type="double" value="0.01" />
+ <!--0.00000001-->
  <param name="upper_bound" type="double" value="50000" />
  <param name="target_id" type="int" value="8" />
  <param name="cam_name" type="string" value="/camera_array/cam0/image_raw" />

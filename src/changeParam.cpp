@@ -45,13 +45,16 @@ string camera_name="";
 double momentum_pre=0;
 string chosen_method;
 image_transport::Publisher pub_image;
+image_transport::Publisher pub_image_cropped;
+image_transport::Publisher pub_image_gradient;
+image_transport::Publisher pub_image_gradient_weight;
 ros::Publisher exposure_time_publisher;
 ros::Publisher active_algorithm_publisher;
 ros::Publisher momentum_publisher;
 //publish the four corners of the bounding box in one message
 ros::Publisher bounding_box_publisher;
 
-// ros::NodeHandle n;
+// ros::NodeHandle n; 
 
 void set_exposure_param(double new_deltaT){
     std_msgs::Float64 exposure_message;
@@ -224,6 +227,35 @@ double grad_score(Mat grad){
     return score;
 
 }
+
+
+// Function to normalize the weights and map them to a new image
+cv::Mat createWeightedImage(const std::vector<double>& W, 
+                            const std::vector<std::pair<double, std::pair<int, int>>>& gradient_1d_with_location, 
+                            const cv::Size& imageSize) {
+    // Find min and max values in W for normalization
+    double minW = *std::min_element(W.begin(), W.end());
+    double maxW = *std::max_element(W.begin(), W.end());
+
+    // Create a new image with the same size as the original image, initialized to black
+    cv::Mat weightedImage = cv::Mat::zeros(imageSize, CV_8UC1);
+
+    // Iterate over the gradient locations and weights
+    for (size_t i = 0; i < gradient_1d_with_location.size(); ++i) {
+        // Normalize the weight to the range [0, 255]
+        double normalizedWeight = 255.0 * (W[i] - minW) / (maxW - minW);
+
+        // Get the pixel location
+        int x = gradient_1d_with_location[i].second.first;
+        int y = gradient_1d_with_location[i].second.second;
+
+        // Set the pixel value in the new image
+        weightedImage.at<uchar>(x, y) = static_cast<uchar>(normalizedWeight);
+    }
+
+    return weightedImage;
+}
+
 
 void debug_check_mat(Mat target){
     for(int i=0;i<target.rows;i++){
@@ -431,7 +463,7 @@ void update_exposure(double deltaT){
 
     double exposure_time_=deltaT_now;
 
-  //
+  
     count_skip++; // TODO remove this?
 
     if(!active_exposure_control && !grad_exposure_control && !active_aec_ori){
@@ -477,10 +509,15 @@ void update_exposure(double deltaT){
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_with_box).toImageMsg();
     pub_image.publish(msg);
     //print the min and max
-    // ROS_INFO("I heard min_x: [%d]", min_x);
-    // ROS_INFO("I heard min_y: [%d]", min_y);
-    // ROS_INFO("I heard max_x: [%d]", max_x);
-    // ROS_INFO("I heard max_y: [%d]", max_y);
+
+    //also publish the cropped image
+    Mat image_with_box_cropped = img.clone();
+    //convert to rgb
+    image_with_box_cropped = image_with_box_cropped(Rect(min_x,min_y,max_x-min_x,max_y-min_y));
+    cvtColor(image_with_box_cropped, image_with_box_cropped, CV_GRAY2RGB);
+    sensor_msgs::ImagePtr msg_cropped = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_with_box_cropped).toImageMsg();
+    pub_image_cropped.publish(msg_cropped);
+
 
     //compress the image in half
     //resize(image, image, Size(), 0.5, 0.5, INTER_LINEAR);
@@ -516,6 +553,22 @@ void update_exposure(double deltaT){
     //from order 14 to 0
 // // //step 1: get the gradient magnitude
      Mat gradient_result = gradient(image);
+
+        //also publish the gradient image
+    Mat image_gradient = gradient_result.clone();
+
+    // Check the depth of the image and convert if necessary
+if (image_gradient.depth() != CV_8U && image_gradient.depth() != CV_16U && image_gradient.depth() != CV_32F) {
+    cv::convertScaleAbs(image_gradient, image_gradient);
+}
+    //convert to rgb
+    cvtColor(image_gradient, image_gradient, CV_GRAY2RGB);
+    sensor_msgs::ImagePtr msg_gr = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_gradient).toImageMsg();
+    pub_image_gradient.publish(msg_gr);
+
+
+
+
     if(info_mode) {
         ROS_INFO("Gradient calculated");
     }
@@ -598,6 +651,23 @@ void update_exposure(double deltaT){
     if(info_mode) {
         ROS_INFO("Weighting DONE");
     }
+
+
+
+    cv::Mat weightedImage=createWeightedImage(W,gradient_1d_with_location,gradient_result.size());
+
+        //also publish the gradient image
+
+    // Check the depth of the image and convert if necessary
+    if (weightedImage.depth() != CV_8U && weightedImage.depth() != CV_16U && image_gradient.depth() != CV_32F) {
+        cv::convertScaleAbs(weightedImage, weightedImage);
+    }
+    //convert to rgb
+    cvtColor(weightedImage, weightedImage, CV_GRAY2RGB);
+    sensor_msgs::ImagePtr msg_weight = cv_bridge::CvImage(std_msgs::Header(), "rgb8", weightedImage).toImageMsg();
+    pub_image_gradient_weight.publish(msg_weight);
+
+
 
     for (int i = 0; i < len; i++) {
         W[i] = W[i] / wsum;
@@ -715,8 +785,10 @@ void update_exposure(double deltaT){
         sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "rgb8", image_with_box).toImageMsg();
         pub_image.publish(msg);
 
+
+
         //downsample the image
-        //resize(image, image, Size(), 0.75, 0.75, INTER_LINEAR);
+        resize(image, image, Size(), 0.8, 0.8, INTER_LINEAR);
 
         //draw the bounding box using red color
         rectangle(image_with_box, Point(min_x,min_y), Point(max_x,max_y), Scalar(255,0,0), 2, 8, 0);
@@ -932,7 +1004,7 @@ void update_exposure(double deltaT){
         min_y=max(0,min_y-25);
         max_x=min(max_x+25,image.cols);
         max_y=min(max_y+25,image.rows);
-        image = image(Rect(min_x,min_y,max_x-min_x,max_y-min_y));
+        //image = image(Rect(min_x,min_y,max_x-min_x,max_y-min_y));
         // //compress the image in half
         //resize(image, image, Size(), 1, 1, INTER_LINEAR);
 
@@ -1088,6 +1160,9 @@ int main(int argc, char** argv) {
     bounding_box_publisher = n.advertise<std_msgs::Int32MultiArray>("bounding_box", 1);
     image_transport::ImageTransport it(n);
     pub_image = it.advertise("image_with_box", 1);
+    pub_image_cropped = it.advertise("image_cropped", 1);
+    pub_image_gradient = it.advertise("image_gradient", 1);
+    pub_image_gradient_weight = it.advertise("image_weight", 1);
 
 // "/camera_array/"+camera_name+"/image_raw"
     //subscribe to /camera_array/cam0/image_raw

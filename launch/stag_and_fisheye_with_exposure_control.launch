@@ -4,7 +4,7 @@
 
 
     <node pkg="rosbag" type="record" name="rosbag_cam_record"
-          args="record -o /home/rlab/lex_data /camera_array/cam0/image_raw/compressed /bluerov_controller/ar_tag_detector_2
+          args="record -o /home/rlab/lex_data_water_aaec /camera_array/cam0/image_raw/compressed /bluerov_controller/ar_tag_detector_2 /rosout
 "/> 
 
 
@@ -34,7 +34,7 @@
       <param name="camera_info_topic" type="string" value="/camera_array/cam0/camera_info" />
       <param name="tag_id_type" type="int" value="21" />
       <param name="marker_frame_prefix" type="string" value="/ar_marker_" />
-      <param name="default_marker_size" type="double" value="0.162" />
+      <param name="default_marker_size" type="double" value="0.122" />
       <param name="output_frame_id"     type="string" value="/cam_0_optical_frame" />
       <param name="image_frame_id"      type="string" value="/cam_0_optical_frame" />
       <param name="marker_message_topic" type="string" value="/bluerov_controller/ar_tag_detector_2" />
@@ -43,7 +43,7 @@
       <param name="publish_debug_images" type="bool" value="true" />
       <!--<rosparam command="load" file="$(find droplet_underwater_assembly)/param/bundle-four-stags-aluminum.json" /> -->
       <!--<rosparam command="load" param="marker_sizes_by_id" file="$(find droplet_underwater_assembly)/param/marker_sizes_by_id.yaml" /> -->
-      <rosparam command="load" file="$(find exposure_control)/param/bundle-four-stags-aluminum-and-large-six-tags.json" />
+      <!--<rosparam command="load" file="$(find exposure_control)/param/bundle-four-stags-aluminum-and-large-six-tags.json" />-->
       <rosparam command="load" param="marker_sizes_by_id" file="$(find exposure_control)/param/marker_sizes_by_id.yaml" />
 
       <param name="marker_track_height_offset" type="int" value="50" />

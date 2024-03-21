@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="run_camera_node" default="false"/>
+
+    <node pkg="exposure_control" type="aaec_exposure_node" name="aaec_exposure_node" args="" output="screen" respawn="false">
+        <param name="image_topic" type="string" value="/camera_array/cam0/image_raw" />
+        <param name="verbose_mode" type="bool" value="false" />
+        <param name="publish_debug_images" type="bool" value="true" />
+        <param name="exposure_upper_bound" type="double" value="20000"/>
+        <param name="default_exposure_time" type="double" value="5000" />
+        <param name="step_length_aec" type="double" value="0.0000000000002" />
+    </node>
+
+    <group if="$(arg run_camera_node)">
+        <include file="$(find spinnaker_sdk_camera_driver)/launch/acquisition_node.launch">
+            <arg name="config_file" value="$(find exposure_control)/param/flir_senko_land_calibration.yaml"/>
+            <arg name="color" value="false"/>
+            <arg name="exposure_time" value="0"/>
+            <arg name="target_grey_value" value="0"/>
+        </include>
+    </group>
+</launch>
